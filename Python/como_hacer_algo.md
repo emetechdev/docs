@@ -111,13 +111,14 @@ API docs: http://127.0.0.1:8000/docs
 3. Ver version de django: `python -m django --version`
 4. Ver admin de django: `python -m django help` o `django-admin help`
 5. Crear proyecto django: `django-admin startproject nombre-proyecto`
-6. Levantar django: `python manage.py runserver` o `python carpetaContenedora/manage.py runserver`
-7. Migrar BD: `python manage.py migrate`
-8. Crear una **app**: `python manage.py startapp nombreApp`, luego agregar la app en **settings** y despues en **urls**
+6. Levantar django: `python manage.py runserver` o `python carpetaContenedora/manage.py runserver`.
+   Levantar django en otro puerto: `python3 manage.py runserver 7000`, levanta en puerto '7000'.
+8. Migrar BD: `python manage.py migrate`
+9. Crear una **app**: `python manage.py startapp nombreApp`, luego agregar la app en **settings** y despues en **urls**
 
-9. Despues de crear o modificar un *Modelo* hay que migrarlo con: `python manage.py makemigrations` y luego tirar un `python manage.py migrate` y `python manage.py migrate ubicacion`
+10. Despues de crear o modificar un *Modelo* hay que migrarlo con: `python manage.py makemigrations` y luego tirar un `python manage.py migrate` y `python manage.py migrate ubicacion`
 
-10. Crear super usuario para el administrador: `python manage.py createsuperuser` y completar lo que pide (emi, emi@mail.com, 1234). Luego para entrar al administrador es en [http://127.0.0.1:8000/admin/]
+11. Crear super usuario para el administrador: `python manage.py createsuperuser` y completar lo que pide (emi, emi@mail.com, 1234). Luego para entrar al administrador es en [http://127.0.0.1:8000/admin/]
 
 ### Django Rest Framework
 1. Instalar django rest framework: [https://www.django-rest-framework.org/]
