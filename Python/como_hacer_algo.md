@@ -149,3 +149,118 @@ Crear usuario: `CREATE USER emiadmin WITH PASSWORD 'contra';`
 Permisos que necesita un usuario para escribir
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO emiadmin; 
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA productos TO emiadmin;
+
+# Integración Mongo en Django
+
+1. Instalar `pip install pymongo[snappy,gssapi,srv,tls]`
+2.  install dnspython for using mongodb+srv:// URIs with the command: `pip install dnspython`
+3.  Crear una session de mongo: (éste método puede ser usado en ./myfirstapp/view.py)
+   ```python
+    from pymongo import MongoClient
+    def get_db_handle(db_name, host, port, username, password):
+    
+     client = MongoClient(host=host,
+                          port=int(port),
+                          username=username,
+                          password=password
+                         )
+     db_handle = client['db_name']
+     return db_handle, client
+```
+4. Obtener la conexión:
+```python
+    from pymongo import MongoClient
+    client = MongoClient('connection_string')
+    db = client['db_name']
+```
+Donde,
+```python
+ connection_string = mongodb+srv://<username>:<password>@<atlas cluster>
+/<myFirstDatabase>?retryWrites=true&w=majority
+```
+Por ejemplo:
+```python
+    makemyrx_db = client['sample_medicines']
+    #collection object
+    medicines_collection = makemyrx_db['medicinedetails']
+```
+Para conectar localhost se puede usar: `MongoClient(‘localhost’, 27017)` o `MongoClient(‘mongodb://localhost: 27017/’)`.
+
+5. MongoEngine (es el ORM). Conectar el motor de mongo "MongoEngine": `pip install mongoengine`.
+Luego conectar el motor:
+```python
+    import mongoengine
+    mongoengine.connect(db=db_name, host=hostname, username=username, password=pwd)
+```
+
+6. Djongo (es el ODM-Objet Document Mapping). Instalación: `pip install djongo`.
+Agregarlo a "settings.py"
+```python
+     DATABASES = {
+           'default': {
+               'ENGINE': 'djongo',
+               'NAME': 'db-name',
+           }
+       }
+```
+o,
+```python
+DATABASES = {
+        'default': {
+            'ENGINE': 'djongo',
+            'NAME': 'your-db-name',
+            'ENFORCE_SCHEMA': False,
+            'CLIENT': {
+                'host': 'mongodb+srv://<username>:<password>@<atlas cluster>/<myFirstDatabase>?retryWrites=true&w=majority'
+            }  
+        }
+}
+```
+Luego se puede ejecutar: `python manage.py makemigrations <app-name>` y luego `python manage.py migrate`
+
+7. Implementación:
+```python
+    import pymongo
+    #connect_string = 'mongodb+srv://<username>:<password>@<atlas cluster>/<myFirstDatabase>?retryWrites=true&w=majority' 
+    
+    from django.conf import settings
+    my_client = pymongo.MongoClient(connect_string)
+    
+    # First define the database name
+    dbname = my_client['sample_medicines']
+    
+    # Now get/create collection name (remember that you will see the database in your mongodb cluster only after you create a collection
+    collection_name = dbname["medicinedetails"]
+    
+    #let's create two documents
+    medicine_1 = {
+        "medicine_id": "RR000123456",
+        "common_name" : "Paracetamol",
+        "scientific_name" : "",
+        "available" : "Y",
+        "category": "fever"
+    }
+    medicine_2 = {
+        "medicine_id": "RR000342522",
+        "common_name" : "Metformin",
+        "scientific_name" : "",
+        "available" : "Y",
+        "category" : "type 2 diabetes"
+    }
+    # Insert the documents
+    collection_name.insert_many([medicine_1,medicine_2])
+    # Check the count
+    count = collection_name.count()
+    print(count)
+    
+    # Read the documents
+    med_details = collection_name.find({})
+    # Print on the terminal
+    for r in med_details:
+        print(r["common_name"])
+    # Update one document
+    update_data = collection_name.update_one({'medicine_id':'RR000123456'}, {'$set':{'common_name':'Paracetamol 500'}})
+    
+    # Delete one document
+    delete_data = collection_name.delete_one({'medicine_id':'RR000123456'})
+```
