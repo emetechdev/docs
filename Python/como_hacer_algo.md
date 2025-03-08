@@ -53,6 +53,12 @@ git push -uf origin main
 - **Version 7:** UUIDs using a Unix timestamp (sortable).
 - **Version 8:** UUIDs using user-defined data.
 
+# VS Code
+Agregar bash terminal como defaul
+1. Abrir el IDE con la combinación `Ctrl` + `Shift` + `P` y tipear *Select Default Profile*
+2. Seleccional la opcion *Git bash*.
+3. Para probar si funciona, matar la terminal que esté abierta y abrir una nueva
+
 # Python
 
 ## Python
